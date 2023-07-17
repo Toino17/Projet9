@@ -1,0 +1,131 @@
+.cardsection{
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.jumpbottron{
+    width: 100%;
+}
+
+.marvelbanner{
+    width: 100%;
+}
+
+.card {
+
+    margin: 0px auto;
+    background-color: white;
+    box-shadow: 0px 5px 20px #999; 
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-bottom: 2%;
+    
+}
+
+.formsignin{
+    display: flex;
+    flex-direction: column;
+}
+
+.formulairelogin{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.divformlog{
+    width: 100%;
+    display: flex;
+    justify-content: center ;
+    align-content: center;
+    text-align: center;
+    
+}
+
+.img_card{
+    width: 150px;
+
+}
+
+.img_card img{
+    width: 100%;
+}
+
+.title, .realisateur, .duree, .genre, .date{
+    text-align: left;
+    
+}
+
+.synopsis{
+    text-align: center;
+    height: 100%;
+    width: 95%;
+}
+
+.bandeannonce{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.ulnavun{
+    display: flex;
+    justify-content: center;
+    justify-content: space-evenly;
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+.genre{
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    justify-content: space-evenly;
+}
+
+.realisateur{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    
+}
+
+.realisateur li{
+    margin:1% 1%;
+    text-align: center;
+}
+
+
+@media screen and (min-width: 1300px){
+    .card{
+        width: 30%;
+    }
+}
+
+@media screen and (min-width: 900px) and (max-width: 1300px){
+    .card{
+        width: 40%;
+    }
+}
+
+@media screen and (max-width: 900px){
+    .card{
+        width: 90%;
+    }
+}
+
+iframe{
+    width: 100%;
+}
