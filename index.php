@@ -1,8 +1,8 @@
 <?php
-include("tableaufilm.php");
 session_start();
 $dbConnect = new PDO("mysql:host=localhost;dbname=projet9", "root", "");
 include("tableaufilm.php");
+
 ?>
 
 <!DOCTYPE html>
@@ -25,15 +25,15 @@ include("tableaufilm.php");
             </ul>
             <ul class='ulnavun'>
                 <a href="index.php"><li>Accueil</li></a>
-                <a href="index.php?film=all"><li>Les Films</li></a>
+                <a href="index.php?page=film"><li>Les Films</li></a>
                 <!-- <a href="index.php?filtre=genre"><li>Genre</li></a>
                 <a href="index.php?filtre=realisateur"><li>Réalisateur</li></a> -->
                 <?php 
                 if (!empty($_SESSION)){
-                    echo '<a href="index.php?log=logout"><li>Se déconnecter</li></a>';
+                    echo '<a href="index.php?page=logout"><li>Se déconnecter</li></a>';
                 } 
                 else{
-                    echo '<a href="index.php?log=login"><li>Se connecter</li></a>';
+                    echo '<a href="index.php?page=login"><li>Se connecter</li></a>';
                 }            
                 ?>
             </ul>
@@ -86,14 +86,14 @@ include("tableaufilm.php");
     <?php 
                                     //  CONNEXION //
 
-                    if (isset($_GET['log']) && ($_GET['log'])=='login'){ 
-                    $log = $_GET['log'];
+                    if (isset($_GET['page']) && ($_GET['page'])=='login'){ 
+                    $page = $_GET['page'];
                     $genresAffiches =[];
                     echo '<div class=\'divformlog\'><form class=\'formulairelogin\' method=\'POST\'>
                     <input type=text name=\'id\' placeholder=\'Identifiant\'>
                     <input type="password" name=\'password\' placeholder=\'Mot de passe\'>
                     <input type="submit" name=\'submitlogin\' value=\'Se connecter\'>
-                    <a href="index.php?log=signin">Créer un compte</a></div>';
+                    <a href="index.php?page=signin">Créer un compte</a></div>';
                  }
             
 
@@ -114,8 +114,8 @@ include("tableaufilm.php");
 
                                     // DECONNEXION //
 
-                if (isset($_GET['log']) && ($_GET['log'])=='logout'){ 
-                    $log = $_GET['log'];
+                if (isset($_GET['page']) && ($_GET['page'])=='logout'){ 
+                    $page = $_GET['page'];
                     $genresAffiches =[];
                     echo '<p>Voulez-vous vraiment vous déconnecter?<p><form method=\'POST\'>
                             <input type=\'submit\' name=\'logoutsubmit\' value=\'Se déconnecter\'></form>';
@@ -130,8 +130,8 @@ include("tableaufilm.php");
 
                                     // INSCRIPTION //
 
-                  if (isset($_GET['log']) && ($_GET['log'])=='signin'){ 
-                    $log = $_GET['log'];
+                  if (isset($_GET['page']) && ($_GET['page'])=='signin'){ 
+                    $page = $_GET['page'];
                    $genresAffiches =[];
 
                    echo 
@@ -159,10 +159,49 @@ include("tableaufilm.php");
                 
                                     // INSCRIPTION //
 
-               ?>
+                                    
+                                    // PAGE D'ACCUEILLE //
 
-    <?php
-    
+    if (!isset($_GET['page']) && empty($_SESSION)){
+
+        echo 'Vous devez être connecter pour accéder à cette page.';
+    }                                 
+
+    if (!isset($_GET['page']) && !empty($_SESSION)){
+
+        echo 'Bienvenue sur votre page d\'accueille '. $_SESSION['Identifiant'] .' !';
+    }
+
+                                  // PAGE D'ACCUEILLE //
+
+        
+                                  // PAGE FILM //
+
+    if (isset($_GET['page']) && $_GET['page']=='film'){
+
+            $sql="SELECT `film`.`Titre`,`film`.`Affiche`, GROUP_CONCAT(CONCAT(`acteur`.`prenom_acteur`,' ',`acteur`.`nom_acteur`)) AS 'Acteurs',
+            CONCAT(`realisateur`.`prenom_realisateur`,' ',`realisateur`.`nom_realisateur`) AS 'Réalisateur',`film`.`Durée`,`film`.`Date_de_sortie` AS 'Date'
+            FROM `film` INNER JOIN `joue` ON `film`.`id_film`=`joue`.`id_film`
+            INNER JOIN `acteur` ON `acteur`.`id_acteur`=`joue`.`id_acteur`
+            INNER JOIN `realise` ON `realise`.`id_film`=`film`.`id_film`
+            INNER JOIN `realisateur` ON `realise`.`id_realisateur`=`realisateur`.`id_realisateur` ";
+            $stmt = $dbConnect->prepare($sql);
+            $stmt -> execute();
+            $result = $stmt->fetchall(PDO::FETCH_ASSOC);
+
+            foreach ($result as $key) {var_dump($result);
+                echo '<div class=\'card\'>
+                <p class=\'title\'>Film: '. $key['Titre'] .'</p>
+                <div class=\'img_card\'><img src="'. $key['Affiche'] .'" alt="#"></div>
+                <p class=\'acteur\'>Acteurs: '. $key['Acteurs'] .'</p>
+                <p class=\'realisateur\'>Réalisateur: '. $key['Réalisateur'] .'</p>
+                <p class=\'date\'>Date de sortie: '. $key['Date'] .'</p>
+                <p class=\'duree\'>Durée: '. $key['Durée'] .'</p>
+                </div>';
+            }
+    }
+
+                                  // PAGE FILM //
 
     if (isset($_GET['genre'])) {
         

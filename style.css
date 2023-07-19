@@ -102,6 +102,10 @@ a{
     
 }
 
+.acteur{
+    text-align: center;
+}
+
 .realisateur li{
     margin:1% 1%;
     text-align: center;
