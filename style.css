@@ -80,6 +80,16 @@
     list-style: none;
 }
 
+.ulnav2{
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    
+}
+
+.ulnav2 li {
+    padding: 1%;
+}
 a{
     text-decoration: none;
     color: black;
@@ -111,6 +121,29 @@ a{
     text-align: center;
 }
 
+.formcreate{
+    display: flex;
+    flex-direction: column;
+}
+
+.divcreate{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.warning1{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.warning2{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 
 @media screen and (min-width: 1300px){
     .card{
