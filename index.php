@@ -20,7 +20,7 @@ include("tableaufilm.php");
             <img class='marvelbanner' src="marvelbanner.png" alt="">
         </div>
         <nav>
-            
+
             
             </ul>
             <ul class='ulnavun'>
@@ -338,13 +338,20 @@ include("tableaufilm.php");
                 $realisatorprename=$_POST['realisatorprename'];
                 $exitdate=$_POST['exitdate'];
                 $duration=$_POST['duration'];
-                    $sql = "INSERT INTO `film`(`Titre`, `Affiche`, `Durée`, `Date_de_sortie`) VALUES ('$titre','$img','$duration','$exitdate');";
+                    $sql = "INSERT INTO `film`(`Titre`, `Affiche`, `Durée`, `Date_de_sortie`) VALUES ('$titre','$img','$duration','$exitdate');
+                            SELECT LAST_INSERT_ID();
+                            SET @film_id := LAST_INSERT_ID();
+                            INSERT INTO joue (id_film) VALUES (@film_id);";
                             $stmt = $dbConnect->prepare($sql);
                             $stmt->execute();
-                    $sql = "INSERT INTO `acteur`(`nom_acteur`, `prenom_acteur`) VALUES ('$actorname','$actorprename');";
+                            
+                    $sql = "INSERT INTO `acteur`(`nom_acteur`, `prenom_acteur`) VALUES ('$actorname','$actorprename');
+                            SELECT LAST_INSERT_ID();
+                            SET @acteur_id := LAST_INSERT_ID();
+                            INSERT INTO joue (id_acteur) VALUES (@acteur_id);";
                             $stmt = $dbConnect->prepare($sql);
                             $stmt->execute();
-                    $sql = "INSERT INTO `realisateur`(`nom_realisateur`, `prenom_realisateur`) VALUES ('[value-1]','[value-2]');";
+                    $sql = "INSERT INTO `realisateur`(`nom_realisateur`, `prenom_realisateur`) VALUES ('$realisatorname','$realisatorprename');";
                             $stmt = $dbConnect->prepare($sql);
                             $stmt->execute();
                 
