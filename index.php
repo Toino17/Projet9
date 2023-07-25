@@ -313,50 +313,282 @@ include("tableaufilm.php");
                             // CREATE - PARAMETRES ADMIN //
 
             if (isset($_GET['page']) && $_GET['page']=='settingsadmin'){
-                echo '<div class=\'divcreate\'>
+                echo '<section class=\'createsection\'><div class=divglobalcreate><div class=\'divcreate\'>
                         <form class=\'formcreate\' method=\'POST\'>
                             <p>Ajouter un film:</p>
                             <input type="text" name=\'title\' placeholder=\'Titre du film\'>
                             <input type="text" name=\'img\' placeholder=\'Affiche\'> 
-                            <input type="text" name=\'actorname\' placeholder=\'Nom Acteur\'>
-                            <input type="text" name=\'actorprename\' placeholder=\'Prénom Acteur\'>
-                            <input type="text" name=\'realisatorname\' placeholder=\' Nom Réalisateur\'> 
-                            <input type="text" name=\'realisatorprename\' placeholder=\'Prénom Réalisateur\'> 
-                            <input type="text" name=\'exitdate\' placeholder=\'Date de sortie\'> 
-                            <input type="text" name=\'duration\' placeholder=\'Durée\'>
-                            <input type="submit" name=\'addfilm_submit\' value=\'Ajouter\'>
-                        </form>
-                    </div>';
-            }
+                            <select name="acteur"><option value="">Acteur -1-</option>';
+                                
+                                $sql="SELECT CONCAT(`acteur`.nom_acteur,' ',`acteur`.prenom_acteur) AS 'Acteurs' , `acteur`.`id_acteur` FROM `acteur`; "; 
+                                $stmt = $dbConnect->prepare($sql);
+                                $stmt -> execute();
+                                $resultacteur = $stmt->fetchall(PDO::FETCH_ASSOC);
+                                
+                                foreach ($resultacteur as $acteur ) {
+                                    echo '<option value="' .$acteur['id_acteur']. '">' .$acteur['Acteurs']. '</option>';
+                                }
+        
+                           
+                             
+                            echo    '</select><select name="acteur2"><option value="">Acteur -2-</option>';
+                                
+                            $sql="SELECT CONCAT(`acteur`.nom_acteur,' ',`acteur`.prenom_acteur) AS 'Acteurs' , `acteur`.`id_acteur` FROM `acteur`; "; 
+                            $stmt = $dbConnect->prepare($sql);
+                            $stmt -> execute();
+                            $resultacteur = $stmt->fetchall(PDO::FETCH_ASSOC);
+                            
+                            foreach ($resultacteur as $acteur ) {
+                                echo '<option value="' .$acteur['id_acteur']. '">' .$acteur['Acteurs']. '</option>';
+                            }
+    
+                       
+                         
+                            echo    '</select><select name="acteur3"><option value="">Acteur -3-</option>';
+                                
+                            $sql="SELECT CONCAT(`acteur`.nom_acteur,' ',`acteur`.prenom_acteur) AS 'Acteurs' , `acteur`.`id_acteur` FROM `acteur`; "; 
+                            $stmt = $dbConnect->prepare($sql);
+                            $stmt -> execute();
+                            $resultacteur = $stmt->fetchall(PDO::FETCH_ASSOC);
+                        
+                            foreach ($resultacteur as $acteur ) {
+                                echo '<option value="' .$acteur['id_acteur']. '">' .$acteur['Acteurs']. '</option>';
+                            }
 
-            if (isset($_POST['addfilm_submit'])){
+                   
+                            
+                            echo    '</select><select name="acteur4"><option value="">Acteur -4-</option>';
+                                        
+                            $sql="SELECT CONCAT(`acteur`.nom_acteur,' ',`acteur`.prenom_acteur) AS 'Acteurs' , `acteur`.`id_acteur` FROM `acteur`; "; 
+                            $stmt = $dbConnect->prepare($sql);
+                            $stmt -> execute();
+                            $resultacteur = $stmt->fetchall(PDO::FETCH_ASSOC);
+                            
+                            foreach ($resultacteur as $acteur ) {
+                                echo '<option value="' .$acteur['id_acteur']. '">' .$acteur['Acteurs']. '</option>';
+                            }
+
+                                
+                            
+                            echo    '</select><select name="acteur5"><option value="">Acteur -5-</option>';
+                                            
+                            $sql="SELECT CONCAT(`acteur`.nom_acteur,' ',`acteur`.prenom_acteur) AS 'Acteurs' , `acteur`.`id_acteur` FROM `acteur`; "; 
+                            $stmt = $dbConnect->prepare($sql);
+                            $stmt -> execute();
+                            $resultacteur = $stmt->fetchall(PDO::FETCH_ASSOC);
+                            
+                            foreach ($resultacteur as $acteur ) {
+                                echo '<option value="' .$acteur['id_acteur']. '">' .$acteur['Acteurs']. '</option>';
+                            }
+
+           
+             
+                            echo    '</select><select name="realisateur"><option value="">Réalisateur</option>';
+                                    
+                                 $sql="SELECT CONCAT(`realisateur`.nom_realisateur,' ',`realisateur`.prenom_realisateur) AS 'realisateur' , `realisateur`.`id_realisateur` FROM `realisateur`; "; 
+                                $stmt = $dbConnect->prepare($sql);
+                                $stmt -> execute();
+                                $resultreal = $stmt->fetchall(PDO::FETCH_ASSOC);
+                    
+                                foreach ($resultreal as $real ) {
+                                    echo '<option value="' .$real['id_realisateur']. '">' .$real['realisateur']. '</option>';
+                                }
+
+                            echo    '</select>
+                                    <input type="text" name=\'exitdate\' placeholder=\'Date de sortie\'> 
+                                    <input type="text" name=\'duration\' placeholder=\'Durée\'>
+                                    <input type="submit" name=\'addfilm_submit\' value=\'Ajouter\'>
+                                    </form>';
+             
+             if (isset($_POST['addfilm_submit'])){
                 $titre=$_POST['title'];
                 $img=$_POST['img'];
-                $actorname=$_POST['actorname'];
-                $actorprename=$_POST['actorprename'];
-                $realisatorname=$_POST['realisatorname'];
-                $realisatorprename=$_POST['realisatorprename'];
+                $idacteur=$_POST['acteur'];
+                $idacteur2=$_POST['acteur2'];
+                $idacteur3=$_POST['acteur3'];
+                $idacteur4=$_POST['acteur4'];
+                $idacteur5=$_POST['acteur5'];
+                $idrealisateur=$_POST['realisateur'];
                 $exitdate=$_POST['exitdate'];
                 $duration=$_POST['duration'];
                     $sql = "INSERT INTO `film`(`Titre`, `Affiche`, `Durée`, `Date_de_sortie`) VALUES ('$titre','$img','$duration','$exitdate');
-                            SELECT LAST_INSERT_ID();
-                            SET @film_id := LAST_INSERT_ID();
-                            INSERT INTO joue (id_film) VALUES (@film_id);";
-                            $stmt = $dbConnect->prepare($sql);
-                            $stmt->execute();
+                    SELECT LAST_INSERT_ID();
+                    SET @film_id := LAST_INSERT_ID();
+                    INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur);
+                    INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur2);
+                    INSERT INTO realise (`id_film`, `id_realisateur`) VALUES (@film_id, $idrealisateur);";
                             
-                    $sql = "INSERT INTO `acteur`(`nom_acteur`, `prenom_acteur`) VALUES ('$actorname','$actorprename');
-                            SELECT LAST_INSERT_ID();
-                            SET @acteur_id := LAST_INSERT_ID();
-                            INSERT INTO joue (id_acteur) VALUES (@acteur_id);";
                             $stmt = $dbConnect->prepare($sql);
                             $stmt->execute();
-                    $sql = "INSERT INTO `realisateur`(`nom_realisateur`, `prenom_realisateur`) VALUES ('$realisatorname','$realisatorprename');";
-                            $stmt = $dbConnect->prepare($sql);
-                            $stmt->execute();
-                
-
+            
             }
+                                    // CREATE - PARAMETRES ADMIN //
+
+
+                                    // CREATE - Ajouter acteur-real //
+
+
+                echo
+                     '<div class=\'formacteur\'><form class=\'formcreate\' method=\'POST\'>
+                     <p>Ajouter un acteur à la BDD: </p>
+                     <input type="text" name=\'Nom_acteur\' placeholder=\'Nom\'>      
+                     <input type="text" name=\'Prenom_acteur\' placeholder=\'Prenom\'>
+                     <input type="submit" name=\'addactor_submit\' value=\'Ajouter\'></form>';
+                
+                if (isset($_POST['addactor_submit'])) {
+                    $nomacteur=$_POST['Nom_acteur'];
+                    $prenomacteur=$_POST['Prenom_acteur'];
+                    $sql="INSERT INTO `acteur`(`nom_acteur`, `prenom_acteur`) VALUES ('$nomacteur', '$prenomacteur');";
+                    $stmt = $dbConnect->prepare($sql);
+                    $stmt->execute();
+                }
+
+                echo 
+                    '<form class=\'formcreate\' method=\'POST\'>
+                    <p>Ajouter un réalisateur à la BDD: </p>
+                    <input type="text" name=\'Nom_real\' placeholder=\'Nom\'>      
+                    <input type="text" name=\'Prenom_real\' placeholder=\'Prenom\'>
+                    <input type="submit" name=\'addreal_submit\' value=\'Ajouter\'></form></div></div>';
+                
+                if (isset($_POST['addreal_submit'])) {
+                    $nomreal=$_POST['Nom_real'];
+                    $prenomreal=$_POST['Prenom_real'];
+                    $sql="INSERT INTO `realisateur`(`nom_realisateur`, `prenom_realisateur`) VALUES ('$nomreal', '$prenomreal');";
+                    $stmt = $dbConnect->prepare($sql);
+                    $stmt->execute();
+                }
+                                    // CREATE - Ajouter acteur-real //         
+        
+
+                                    // DELETE - SUPPRIMER FILM //
+
+        echo 
+            '<form class=\'formdelete\' method=\'POST\'>
+            <p>Supprimer un film: </p>
+            <select name="deleteselect"><option value="">Séléctionner</option>';
+                
+            $sql="SELECT (`film`.`titre`) AS 'Titre' , `film`.`id_film` FROM `film`;"; 
+            $stmt = $dbConnect->prepare($sql);
+            $stmt -> execute();    
+            $filmmarvel = $stmt->fetchall(PDO::FETCH_ASSOC);
+                
+                foreach ($filmmarvel as $titrefilmmarvel ) {
+                    echo '<option value="' .$titrefilmmarvel['id_film']. '">' .$titrefilmmarvel['Titre']. '</option>';
+                }
+                echo '</select>';
+                echo '<input type="submit" name=\'deletefilm_submit\' value=\'Supprimer\'></form>';
+            
+            if (isset($_POST['deletefilm_submit'])) {
+
+                $iddeletefilm=$_POST['deleteselect'];
+                echo $iddeletefilm;
+                $sql="DELETE FROM `realise` WHERE id_film='$iddeletefilm';
+                      DELETE FROM `joue` WHERE id_film='$iddeletefilm';
+                      DELETE FROM `film` WHERE id_film='$iddeletefilm';";
+                $stmt = $dbConnect->prepare($sql);
+                $stmt -> execute();  
+            }
+
+        echo '<form class=\'formdelete\' method=\'POST\'>
+        <p>Modifier un film: </p>
+        <select name="updateselect"><option value="">Séléctionner</option>';
+            
+        $sql="SELECT (`film`.`titre`) AS 'Titre' , `film`.`id_film` FROM `film`;"; 
+        $stmt = $dbConnect->prepare($sql);
+        $stmt -> execute();    
+        $filmmarvel = $stmt->fetchall(PDO::FETCH_ASSOC);
+            
+            foreach ($filmmarvel as $titrefilmmarvel ) {
+                echo '<option value="' .$titrefilmmarvel['id_film']. '">' .$titrefilmmarvel['Titre']. '</option>';
+            }
+            echo '</select>';
+            echo '<input type="submit" name=\'update_submit\' value=\'Modifer\'></form>';     
+            
+        
+        if (isset($_POST['update_submit'])) {
+            
+            $idfilm=$_POST['updateselect'];
+                $sql="SELECT `film`.`Titre`,`film`.`Affiche`,CONCAT(`acteur`.`prenom_acteur`,' ',`acteur`.`nom_acteur`) AS 'Acteurs', CONCAT(`realisateur`.`prenom_realisateur`,' ',`realisateur`.`nom_realisateur`) AS 'Réalisateur',`film`.`Durée`,`film`.`Date_de_sortie` AS 'Date'
+            FROM `film` 
+            INNER JOIN `joue` ON `film`.`id_film`=`joue`.`id_film` 
+            INNER JOIN `acteur` ON `acteur`.`id_acteur`=`joue`.`id_acteur` 
+            INNER JOIN `realise` ON `realise`.`id_film`=`film`.`id_film` 
+            INNER JOIN `realisateur` ON `realise`.`id_realisateur`=`realisateur`.`id_realisateur`
+            WHERE `film`.`id_film`= $idfilm
+            GROUP BY `film`.`Titre`;";
+            $stmt = $dbConnect->prepare($sql);
+            $stmt -> execute();
+            $tablefilmupdate = $stmt->fetchall(PDO::FETCH_ASSOC);
+            foreach ($tablefilmupdate as $key){
+            
+            echo  '<form class=\'tableform\'method=\'POST\'><table>
+                    <caption>' .$key['Titre']. '</caption>
+                    <tr><th>Titre</th><th>Affiche</th><th>Acteur</th><th>Réalisateur</th><th>Durée</th><th>Date de sortie</th></tr>
+                    <tr><td><input type="text" name=\'update_title\' value=\'' .$key['Titre']. '\'></td>
+                    <td><input type="text" name=\'update_title\' value=\'' .$key['Affiche']. '\'></td>
+                    <td><select name="acteurupdateselect">
+                    <option value="">Séléctionner</option>';
+                
+                $sql="SELECT film.id_film, CONCAT(acteur.nom_acteur,' ', acteur.prenom_acteur) AS 'Acteurs'
+                FROM `film` 
+                INNER JOIN joue ON film.id_film=joue.id_film 
+                INNER JOIN acteur ON acteur.id_acteur=joue.id_acteur
+                WHERE film.id_film=$idfilm; "; 
+                $stmt = $dbConnect->prepare($sql);
+                $stmt -> execute();
+                $resultacteurupdate = $stmt->fetchall(PDO::FETCH_ASSOC);
+                
+                foreach ($resultacteurupdate as $acteurupdate ) {
+                    echo '<option value="' .$acteurupdate['id_acteur']. '">' .$acteurupdate['Acteurs']. '</option>';
+                }
+                echo '</select>';
+                if (isset($_POST['maj_submit'])) {
+                    list($nameactormaj, $prenameactormaj)=explode(" ",$acteurupdate['Acteurs']);
+                   
+                    echo '<input type="text" name=\'majnameactor\' value=\'' .$nameactormaj. '\'>';
+                }
+                echo '<br><input type="submit" name=\'maj_submit\' value=\'MAJ\'>
+                        <input type="submit" name=\'add_submit\' value=\'ADD\'>
+                        <input type="submit" name=\'del_submit\' value=\'DEL\'></form></td>
+                    <td>' .$key['Réalisateur']. '</td>
+                    <td><input type="text" name=\'update_title\' value=\'' .$key['Durée']. '\'></td>
+                    <td><input type="text" name=\'update_title\' value=\'' .$key['Date']. '\'></td></tr>
+                    </table></div></section>';
+
+        }    
+    }
+}
+                                    // DELETE - SUPPRIMER FILM //
+
+            // if (isset($_POST['addfilm_submit'])){
+            //     $titre=$_POST['title'];
+            //     $img=$_POST['img'];
+            //     $actorname=$_POST['actorname'];
+            //     $actorprename=$_POST['actorprename'];
+            //     $realisatorname=$_POST['realisatorname'];
+            //     $realisatorprename=$_POST['realisatorprename'];
+            //     $exitdate=$_POST['exitdate'];
+            //     $duration=$_POST['duration'];
+            //         $sql = "INSERT INTO `film`(`Titre`, `Affiche`, `Durée`, `Date_de_sortie`) VALUES ('$titre','$img','$duration','$exitdate');
+            //         SELECT LAST_INSERT_ID();
+            //         SET @film_id := LAST_INSERT_ID();
+            //         INSERT INTO `acteur`(`nom_acteur`, `prenom_acteur`) VALUES ('$actorname','$actorprename');
+            //         SELECT LAST_INSERT_ID();
+            //         SET @acteur_id := LAST_INSERT_ID();
+            //         INSERT INTO `realisateur`(`nom_realisateur`, `prenom_realisateur`) VALUES ('$realisatorname','$realisatorprename');
+            //         SELECT LAST_INSERT_ID();
+            //         SET @realisateur_id := LAST_INSERT_ID();
+            //         INSERT INTO realise (id_film, id_realisateur) VALUES (@film_id, @realisateur_id);
+            //         INSERT INTO joue (id_film, id_acteur) VALUES (@film_id, @acteur_id);";
+
+            //                 $stmt = $dbConnect->prepare($sql);
+            //                 $stmt->execute();
+                            
+
+                            
+    
+
+            // }
 ?>  
 <?php
                             // CREATE - PARAMETRES ADMIN //
