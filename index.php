@@ -27,8 +27,6 @@ include("tableaufilm.php");
                 <a href="index.php"><li>Accueil</li></a>
                 <a href="index.php?page=film"><li>Les Films</li></a>
                 <a href="index.php?page=settingsadmin"><li>Paramètres</li></a>
-                <!-- <a href="index.php?filtre=genre"><li>Genre</li></a>
-                <a href="index.php?filtre=realisateur"><li>Réalisateur</li></a> -->
                 <?php 
                 if (!empty($_SESSION)){
                     echo '<a href="index.php?page=logout"><li>Se déconnecter</li></a>';
@@ -51,45 +49,6 @@ include("tableaufilm.php");
                 
             ?>
             </ul>
-            <?php
-                //  if (isset($_GET['filtre']) && ($_GET['filtre'])=='genre'){ 
-                //  $filtre = $_GET['filtre'];
-                //  $genresAffiches =[];
-                //      echo '<ul class=\'genre\'>';
-
-                //     foreach ($listfilm as $film => $value) {
-                //         $genre=explode(", ",$value['genre']);
-                //         foreach ($genre as $key) {
-                //            if (!in_array($key, $genresAffiches)) {
-                //             echo '<a href="index.php?filtre='. $filtre .'&genre='. $key .'"><li>'. $key .'</li></a>';
-                //             $genresAffiches[] = $key;
-                //         '</ul>';
-                //         }
-                          
-                //         }
-                //     }
-                // }
-                 
-                 
-                //  if (isset($_GET['filtre']) && ($_GET['filtre'])=='realisateur') {
-                //      $filtre = $_GET['filtre'];
-                //      $realAffiches=[];
-                //         echo '<ul class=\'realisateur\'>';
-
-                //     foreach ($listfilm as $film => $value) {
-                //         $realisateur=explode(", ",$value['realisateur']);
-                //         foreach ($realisateur as $keyreal) {
-                //             if (!in_array($keyreal, $realAffiches)) {
-                //                 echo
-                //                     '<a href="index.php?filtre='. $filtre .'&realisateur='. $keyreal .'"><li>'. $keyreal .'</li></a>';
-                //                     '</ul>';
-                //             }
-                //         }
-                        
-                //     }
-                //  }
-                
-            ?>
         </nav>
     </header>
 <section class='cardsection'>
@@ -97,8 +56,7 @@ include("tableaufilm.php");
                                     //  CONNEXION //
 
                     if (isset($_GET['page']) && ($_GET['page'])=='login'){ 
-                    $page = $_GET['page'];
-                    $genresAffiches =[];
+
                     echo '<div class=\'divformlog\'><form class=\'formulairelogin\' method=\'POST\'>
                     <input type=text name=\'id\' placeholder=\'Identifiant\'>
                     <input type="password" name=\'password\' placeholder=\'Mot de passe\'>
@@ -125,8 +83,7 @@ include("tableaufilm.php");
                                     // DECONNEXION //
 
                 if (isset($_GET['page']) && ($_GET['page'])=='logout'){ 
-                    $page = $_GET['page'];
-                    $genresAffiches =[];
+
                     echo '<p>Voulez-vous vraiment vous déconnecter?<p><form method=\'POST\'>
                             <input type=\'submit\' name=\'logoutsubmit\' value=\'Se déconnecter\'></form>';
                  }
@@ -141,8 +98,6 @@ include("tableaufilm.php");
                                     // INSCRIPTION //
 
                   if (isset($_GET['page']) && ($_GET['page'])=='signin'){ 
-                    $page = $_GET['page'];
-                   $genresAffiches =[];
 
                    echo 
                         '<div class=\'divformlog\'>
@@ -159,6 +114,13 @@ include("tableaufilm.php");
                       $identifiant=$_POST['idsignin'];
                       $password=$_POST['passwordsignin'];
                       $mail=$_POST['mailsignin'];
+
+                    $sql_check_unique = "SELECT COUNT(*) FROM utilisateur WHERE identifiant = ?";
+                    $stmt_check_unique = $dbConnect->prepare($sql_check_unique);
+                    $stmt_check_unique->execute([$mail]);
+                    $count = $stmt_check_unique->fetchColumn();
+
+
                       
                       $sql = "INSERT INTO `utilisateur`(`Identifiant`, `Motdepasse`, `Mail`) 
                      VALUES ('$identifiant','$password','$mail')";
@@ -319,17 +281,17 @@ include("tableaufilm.php");
                     <select name="DDate">
                     <option value="">Séléctionner</option>';
                                 
-                $sql="SELECT `film`.`Date_de_sortie` AS 'Date', `film`.`id_film` FROM `film`;"; 
+                $sql="SELECT `film`.`Date_de_sortie` AS 'Date', `film`.`id_film` FROM `film` GROUP BY `film`.`Date_de_sortie`;"; 
                 $stmt = $dbConnect->prepare($sql);
                 $stmt -> execute();
                 $resultdate = $stmt->fetchall(PDO::FETCH_ASSOC);
                 
                 foreach ($resultdate as $date) {
-                    echo '<option value="' .$date['id_film']. '">' .$date['Date']. '</option>';
+                    echo '<option value="' .$date['Date']. '">' .$date['Date']. '</option>';
                 }
                 echo '</select>';
                 echo '<input type="submit" name=\'date_submit\' value=\'Filtrer\'></form>';
-                var_dump($date);
+                
             }
                             
             if (isset($_POST['date_submit'])){
@@ -340,7 +302,7 @@ include("tableaufilm.php");
                 INNER JOIN `acteur` ON `acteur`.`id_acteur`=`joue`.`id_acteur` 
                 INNER JOIN `realise` ON `realise`.`id_film`=`film`.`id_film` 
                 INNER JOIN `realisateur` ON `realise`.`id_realisateur`=`realisateur`.`id_realisateur` 
-                WHERE `film`.`id_film`=" .$datechoisi. "
+                WHERE `film`.`Date_de_sortie`=" .$datechoisi. "
                 GROUP BY `film`.`Titre`;";
                     $stmt = $dbConnect->prepare($sql);
                     $stmt -> execute();
@@ -466,6 +428,9 @@ include("tableaufilm.php");
                     SET @film_id := LAST_INSERT_ID();
                     INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur);
                     INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur2);
+                    INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur3);
+                    INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur4);
+                    INSERT INTO joue (`id_film`, `id_acteur`) VALUES (@film_id, $idacteur5);
                     INSERT INTO realise (`id_film`, `id_realisateur`) VALUES (@film_id, $idrealisateur);";
                             
                             $stmt = $dbConnect->prepare($sql);
@@ -531,7 +496,6 @@ include("tableaufilm.php");
             if (isset($_POST['deletefilm_submit'])) {
 
                 $iddeletefilm=$_POST['deleteselect'];
-                echo $iddeletefilm;
                 $sql="DELETE FROM `realise` WHERE id_film='$iddeletefilm';
                       DELETE FROM `joue` WHERE id_film='$iddeletefilm';
                       DELETE FROM `film` WHERE id_film='$iddeletefilm';";
@@ -539,26 +503,10 @@ include("tableaufilm.php");
                 $stmt -> execute();  
             }
 
+                                // UPDATE FILM //
+
         echo '<form class=\'formdelete\' method=\'POST\'>';
-        // <p>Modifier un film: </p>
-        // <select name="updateselect"><option value="">Séléctionner</option>';
-            
-        // $sql="SELECT (`film`.`titre`) AS 'Titre' , `film`.`id_film` FROM `film`;"; 
-        // $stmt = $dbConnect->prepare($sql);
-        // $stmt -> execute();    
-        // $filmmarvel = $stmt->fetchall(PDO::FETCH_ASSOC);
-            
-        //     foreach ($filmmarvel as $titrefilmmarvel ) {
-        //         echo '<option value="' .$titrefilmmarvel['id_film']. '">' .$titrefilmmarvel['Titre']. '</option>';
-        //     }
-        //     echo '</select>';
-            // echo '<input type="submit" name=\'update_submit\' value=\'Modifer\'></form>';     
-            
-        
-        // if (isset($_POST['update_submit'])) {
-            // WHERE `film`.`id_film`= $idfilm
-            
-            //     $idfilm=$_POST['updateselect'];
+
             $sql="SELECT `film`.`id_film`,`film`.`Titre`,`film`.`Affiche`,CONCAT(`acteur`.`prenom_acteur`,' ',`acteur`.`nom_acteur`) AS 'Acteurs', CONCAT(`realisateur`.`prenom_realisateur`,' ',`realisateur`.`nom_realisateur`) AS 'Réalisateur',`film`.`Durée`,`film`.`Date_de_sortie` AS 'Date'
             FROM `film` 
             INNER JOIN `joue` ON `film`.`id_film`=`joue`.`id_film` 
@@ -571,124 +519,71 @@ include("tableaufilm.php");
             $tablefilmupdate = $stmt->fetchall(PDO::FETCH_ASSOC);
             
 
-            echo  '<form class=\'tableform\'method=\'POST\'><table>
-                    <tr><th>Titre</th><th>Affiche</th><th>Acteur</th><th>Réalisateur</th><th>Durée</th><th>Date de sortie</th><th>Ajouter un acteur</th></tr>';
+            echo  '<form class=\'tableform\'method=\'POST\'><p>Modifier Film: </p><table>
+                    <tr><th>Titre</th><th>Affiche</th><th>Durée</th><th>Date de sortie</th><th>Modifier</th></tr>';
             foreach ($tablefilmupdate as $key){
                 $idfilm=$key['id_film'];
                 echo    '<tr><td><input type="text" name=\'update_title'. $idfilm .'\' value=\'' .$key['Titre']. '\'></td>
                     <td><input type="text" name=\'update_affiche' .$idfilm. '\' value=\'' .$key['Affiche']. '\'></td>
-                    <td><select name="acteurupdateselect' .$idfilm. '">
-                    <option value="">Séléctionner</option>';
-                
-                $sql="SELECT film.id_film, acteur.id_acteur, CONCAT(acteur.nom_acteur,' ', acteur.prenom_acteur) AS 'Acteurs'
-                FROM `film` 
-                INNER JOIN joue ON film.id_film=joue.id_film 
-                INNER JOIN acteur ON acteur.id_acteur=joue.id_acteur
-                WHERE film.id_film=$idfilm; "; 
-                $stmt = $dbConnect->prepare($sql);
-                $stmt -> execute();
-                $resultacteurupdate = $stmt->fetchall(PDO::FETCH_ASSOC);
-                
-                foreach ($resultacteurupdate as $acteurupdate ) {
-                    echo '<option value="' .$acteurupdate['id_acteur']. '">' .$acteurupdate['Acteurs']. '</option>';
-                }
-                echo '</select>';
-                if (isset($_POST['del_submit'])) {
-                    // list($nameactormaj, $prenameactormaj)=explode(" ",$acteurupdate['Acteurs']);
-                    $id_acteur=$_POST['acteurupdateselect'. $idfilm .''];
-                    $sql="DELETE FROM `joue` WHERE id_film='$idfilm' AND id_acteur='$id_acteur';";
-                    $stmt = $dbConnect->prepare($sql);
-                    $stmt -> execute();
-                    echo $acteurupdate['id_acteur'];
-                }
-                echo '<br><input type="submit" name=\'maj_submit\' value=\'MAJ\'>
-                        <input type="submit" name=\'add_submit\' value=\'ADD\'>
-                        <input type="submit" name=\'del_submit\' value=\'DEL\'></td>
-                    <td><input type="text" name=\'update_real' .$idfilm. '\'' .$key['Réalisateur']. '</td>
                     <td><input type="text" name=\'update_duree' .$idfilm. '\' value=\'' .$key['Durée']. '\'></td>
                     <td><input type="text" name=\'update_date' .$idfilm. '\' value=\'' .$key['Date']. '\'></td>
-                    <td><select name="acteurupdateselect' .$idfilm. '">
-                    <option value="">Séléctionner</option>';
-                
-                $sql="SELECT film.id_film, acteur.id_acteur, CONCAT(acteur.nom_acteur,' ', acteur.prenom_acteur) AS 'Acteurs'
-                FROM `film` 
-                INNER JOIN joue ON film.id_film=joue.id_film 
-                INNER JOIN acteur ON acteur.id_acteur=joue.id_acteur"; 
-                $stmt = $dbConnect->prepare($sql);
-                $stmt -> execute();
-                $resultacteurupdate = $stmt->fetchall(PDO::FETCH_ASSOC);
-                
-                foreach ($resultacteurupdate as $acteurupdate ) {
-                    echo '<option value="' .$acteurupdate['id_acteur']. '">' .$acteurupdate['Acteurs']. '</option>';
-                }
-                echo '</select><br><input type="submit" name=\'add_submit\' value=\'ADD\'></td>';
-                   
+                    <td><input type="submit" name=\'modifier' .$idfilm. '\' value=\'Modifer\'></td>';
 
+                    if (isset($_POST['modifier' .$idfilm. ''])){
+                        $titreupdate=$_POST['update_title'. $idfilm .''];
+                        $afficheupdate=$_POST['update_affiche'. $idfilm .''];
+                        $dureeupdate=$_POST['update_duree'. $idfilm .''];
+                        $dateupdate=$_POST['update_date'. $idfilm .''];
+                       $sql2="UPDATE `film` SET `Titre`='$titreupdate',`Affiche`='$afficheupdate',`Durée`='$dureeupdate',`Date_de_sortie`='$dateupdate' WHERE film.id_film='$idfilm'";
+                       $stmt = $dbConnect->prepare($sql2);
+                       $stmt -> execute();
+                    }
+          
         }
-        echo '</table><input type="submit" name=\'update_submit\' value=\'Modifer\'></form></div></section>';
+        echo '</table></form>';
+                                    // UPDATE FILM //
         
+                                    // UPDATE ACTEUR  //
 
-        if (isset($_POST['update_submit'])) {
-            ${'updatetitle' .$idfilm. ''}=$_POST['update_title'. $idfilm .''];
-            var_dump($updatetitle6);
-            
+        echo  '<form class=\'tableform\'method=\'POST\'><p>Modifier Acteur :<p><table>
+                    <tr><th>Acteur</th><th>Nouveau prenom:</th><th>Nouveau Nom:</th><th>Modifier:</th><th>Supprimer:</th></tr>';
+            $sql3="SELECT acteur.id_acteur, CONCAT(acteur.prenom_acteur,' ',acteur.nom_acteur) AS 'Acteur' FROM `acteur`; ";
+            $stmt = $dbConnect->prepare($sql3);
+            $stmt -> execute();
+            $tableacteurupdate = $stmt->fetchall(PDO::FETCH_ASSOC);
+
+            foreach ($tableacteurupdate as $keyacteur){
+                
+                
+                $idacteurupdate=$keyacteur['id_acteur'];
+                $nomcompletacteur=$keyacteur['Acteur'];
+
+                list($nameactormaj, $prenameactormaj)=explode(" ",$nomcompletacteur);
+                echo    '<tr><td>' .$keyacteur['Acteur']. '</td>
+                    <td><input type="text" name=\'update_nomacteur' .$idacteurupdate. '\' value=\'' .$nameactormaj. '\'></td>
+                   <td><input type="text" name=\'update_prenomacteur' .$idacteurupdate. '\' value=\'' .$prenameactormaj. '\'></td>
+                    <td><input type="submit" name=\'modifieracteur' .$idacteurupdate. '\' value=\'Modifer\'></td>
+                    <td><input type="submit" name=\'deleteacteur' .$idacteurupdate. '\' value=\'Supprimer\'></td>';
+
+                    if (isset($_POST['modifieracteur' .$idacteurupdate. ''])){
+                        $actornomupdatefinal=$_POST['update_prenomacteur'. $idacteurupdate .''];
+                        $actorprenomupdatefinal=$_POST['update_nomacteur'. $idacteurupdate .''];
+
+                       $sql3="UPDATE `acteur` SET `nom_acteur`='$actornomupdatefinal',`prenom_acteur`='$actorprenomupdatefinal' WHERE acteur.id_acteur='$idacteurupdate'";
+                       $stmt = $dbConnect->prepare($sql3);
+                       $stmt -> execute();
+                    }
+
+                    if (isset($_POST['deleteacteur' .$idacteurupdate. ''])) {
+                        $sql4="DELETE FROM `acteur` WHERE id_acteur='$idacteurupdate'";
+                        $stmt = $dbConnect->prepare($sql4);
+                        $stmt -> execute();
+                    }
+            }
+                echo '</table></form></div></section>';
         }
-
-    }
-
-                                    // DELETE - SUPPRIMER FILM //
-
-            // if (isset($_POST['addfilm_submit'])){
-            //     $titre=$_POST['title'];
-            //     $img=$_POST['img'];
-            //     $actorname=$_POST['actorname'];
-            //     $actorprename=$_POST['actorprename'];
-            //     $realisatorname=$_POST['realisatorname'];
-            //     $realisatorprename=$_POST['realisatorprename'];
-            //     $exitdate=$_POST['exitdate'];
-            //     $duration=$_POST['duration'];
-            //         $sql = "INSERT INTO `film`(`Titre`, `Affiche`, `Durée`, `Date_de_sortie`) VALUES ('$titre','$img','$duration','$exitdate');
-            //         SELECT LAST_INSERT_ID();
-            //         SET @film_id := LAST_INSERT_ID();
-            //         INSERT INTO `acteur`(`nom_acteur`, `prenom_acteur`) VALUES ('$actorname','$actorprename');
-            //         SELECT LAST_INSERT_ID();
-            //         SET @acteur_id := LAST_INSERT_ID();
-            //         INSERT INTO `realisateur`(`nom_realisateur`, `prenom_realisateur`) VALUES ('$realisatorname','$realisatorprename');
-            //         SELECT LAST_INSERT_ID();
-            //         SET @realisateur_id := LAST_INSERT_ID();
-            //         INSERT INTO realise (id_film, id_realisateur) VALUES (@film_id, @realisateur_id);
-            //         INSERT INTO joue (id_film, id_acteur) VALUES (@film_id, @acteur_id);";
-
-            //                 $stmt = $dbConnect->prepare($sql);
-            //                 $stmt->execute();
-                            
-
-                            
-    
-
-            // }
+                                    // UPDATE ACTEUR  //
 ?>  
-<?php
-                            // CREATE - PARAMETRES ADMIN //
-
-
-        // else {
-        //     foreach ($listfilm as $film => $value) {
-        //         echo     '<div class=\'card\'>
-        //             <p class=\'title\'>Film: '. $value['name'] .'</p>
-        //             <div class=\'img_card\'><img src="'. $value['img'] .'" alt="#"></div>
-        //             <p class=\'date\'>Date de sortie: '. $value['date'] .'</p>
-        //             <p class=\'realisateur\'>Réalisateur: '. $value['realisateur'] .'</p>
-        //             <p class=\'duree\'>Durée: '. $value['duree'] .'</p>
-        //             <p class=\'genre\'>Genre: '. $value['genre'] .'</p>
-        //             <p class=\'synopsis\'>Synopsis: '. $value['synopsis'] .'</p>
-        //             <p class=\'bandeannonce\'>Bande-annonce: '. $value['bandeannonce'] .'</p>
-        //             </div>';
-        //     }
-
-        // }
-        ?>
-
 </section>    
 </body>
 </html>
